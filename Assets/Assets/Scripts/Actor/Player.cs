@@ -5,7 +5,7 @@
     using UnityEngine;
     using UnityEngine.Assertions;
 
-    using Command;
+    using Input;
     //using State;
 
     public enum PlayerState
@@ -72,33 +72,48 @@
 
         }
 
-        public void Update()
-        {
-            CheckInputAndChangeState();
-            FlipSprite(Input.GetAxisRaw("Horizontal"));
-        }
-
-        private PlayerState CheckInputAndChangeState()
+        public override void HandleInput(InputObject input)
         {
             switch (CurrentState)
             {
                 case PlayerState.WAITING:
                 case PlayerState.WALKING:
-                    if (Input.GetButton("Jump"))
+                    if (input.GetType() == typeof(JumpInputObject))
                     {
-                        Rigitbody2D.AddForce(Vector2.up * VerticalForce , ForceMode2D.Impulse);
+                        Debug.Log("Jump");
+                        Rigitbody2D.AddForce(Vector2.up * VerticalForce, ForceMode2D.Impulse);
+
                         Animator.SetInteger("player_state", (int)PlayerState.JUMPING);
                         CurrentState = PlayerState.JUMPING;
+
                         OnGround = false;
+
                         break;
                     }
-                    if (Input.GetButton("Horizontal"))
+                    //TODO 一定以上の速度にならない工夫が必要。
+                    if (input is HorizontalInputObject)
                     {
-                        //TODO 一定以上の速度にならない工夫が必要。
-                        Vector2 v = new Vector2(Input.GetAxisRaw("Horizontal"), 0);
+                        Vector2 v = Vector2.zero;
+                        if (input.GetType() == typeof(RightInputObject))
+                        {
+                            v = Vector2.right;
+                        } 
+                        else if(input.GetType() == typeof(LeftInputObject))
+                        {
+                            v = Vector2.left;
+                        } 
+                        else
+                        {
+                            Assert.IsTrue(false, "Horizontal Input is invalid.");
+                        }
+
                         Rigitbody2D.AddForce(v * HorizontalForce, ForceMode2D.Impulse);
+
+                        FlipSprite(v.x);
+
                         Animator.SetInteger("player_state", (int)PlayerState.WALKING);
                         CurrentState = PlayerState.WALKING;
+
                         break;
                     }
 
@@ -106,22 +121,27 @@
                     {
                         Animator.SetInteger("player_state", (int)PlayerState.WAITING);
                         CurrentState = PlayerState.WAITING;
+
+                        break;
                     }
+
                     break;
+
                 case PlayerState.JUMPING:
                     if (OnGround)
                     {
                         Animator.SetInteger("player_state", (int)PlayerState.WAITING);
                         CurrentState = PlayerState.WAITING;
+
                         break;
                     }
+
                     break;
+
                 default:
                     Assert.IsTrue(false, "Player state is invalid.");
                     break;
             }
-
-            return CurrentState;
         }
 
         /// <summary>
@@ -142,13 +162,9 @@
 
         public bool IsStopped()
         {
+            // TODO Stop判定処理は決め打ちなので、後で検討すること。
             float x = Rigitbody2D.velocity.x;
             return (x > -5f && x < 5f);
-        }
-
-        public override void HandleCommand(Command command)
-        {
-            
         }
     }
 }

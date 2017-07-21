@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using UnityEngine;
 
-    using Command;
+    using Input;
     using State;
 
     /// <summary>
@@ -29,9 +29,9 @@
         }
 
         /// <summary>
-        /// Commandクラスを受け取り、状態に応じた処理を実行する。
+        /// InputObjectクラスを受け取り、入力に応じた処理を行う。
         /// </summary>
-        public virtual void HandleCommand(Command command)
+        public virtual void HandleInput(InputObject input)
         {
 
         }
