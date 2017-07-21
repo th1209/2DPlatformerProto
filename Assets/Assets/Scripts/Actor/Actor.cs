@@ -12,11 +12,11 @@
     /// </summary>
     public class Actor : MonoBehaviour
     {
-        public ActorState State
-        {
-            get;
-            set;
-        }
+        //public ActorState State
+        //{
+        //    get;
+        //    set;
+        //}
 
         private void Start()
         {
@@ -33,7 +33,7 @@
         /// </summary>
         public virtual void HandleCommand(Command command)
         {
-            
+
         }
     }
 }
