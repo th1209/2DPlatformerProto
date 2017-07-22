@@ -6,7 +6,6 @@
     using UnityEngine.Assertions;
 
     using Actor;
-    using Command;
 
     public class InputHandler : MonoBehaviour
     {

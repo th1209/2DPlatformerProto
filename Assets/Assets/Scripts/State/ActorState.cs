@@ -5,29 +5,40 @@
     using UnityEngine;
 
     using Actor;
-    using Command;
+    using Input;
 
     /// <summary>
     /// Actorクラスの状態を表すクラス(Stateパターン)。
     /// </summary>
     public class ActorState
     {
+        public Actor Actor
+        {
+            get;
+            set;
+        }
+
+        public ActorState(Actor actor)
+        {
+            Actor = actor;
+        }
+
         /// <summary>
         /// 他のステートから、このステートに切り替わった際に呼ばれるメソッド。
         /// 状態の切り替わり時に必要な初期化処理を実施する。
         /// </summary>
-        public void Enter(Actor actor)
+        public virtual void Enter()
         {
             
         }
 
         /// <summary>
-        /// Actorクラスに対し、適切なCommandを実施する。
+        /// 渡されたInputObjectに対し、適切な処理を実行する。
         /// </summary>
-        /// <returns>このステートもしくは他のステート。</returns>
-        public virtual ActorState HandleCommand(Actor actor, Command command)
+        /// <returns>状態遷移する場合は他のステート。引き続きこの状態の場合はnull。</returns>
+        public virtual ActorState HandleInput(InputObject input)
         {
-            return new ActorState();
+            return null;
         }
     }
 }

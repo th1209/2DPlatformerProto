@@ -12,20 +12,104 @@
     /// </summary>
     public class Actor : MonoBehaviour
     {
-        //public ActorState State
-        //{
-        //    get;
-        //    set;
-        //}
+        /// <summary>
+        /// 横方向移動時にかかる力。
+        /// </summary>
+        public float VerticalForce
+        {
+            get { return 500f; }
+        }
+
+        /// <summary>
+        /// 縦方向移動時にかかる力
+        /// </summary>
+        public float HorizontalForce
+        {
+            get { return 50f; }
+        }
+
+        /// <summary>
+        /// 現在の向き。0以上なら右向き。0未満なら左向き。
+        /// </summary>
+        public float CurrentDirection
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 地面に接地しているかのフラグ。
+        /// </summary>
+        public bool OnGround
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 現在のステート。具体的な状態遷移は、継承クラス側で管理。
+        /// </summary>
+        public ActorState CurrentState
+        {
+            get;
+            set;
+        }
+
+        public Animator Animator
+        {
+            get;
+            set;
+        }
+
+        public Rigidbody2D Rigitbody2D
+        {
+            get;
+            set;
+        }
 
         private void Start()
         {
-            
+            Initialize();
         }
 
-        private void Update()
+        /// <summary>
+        /// このインスタンスの初期化処理。
+        /// </summary>
+        protected virtual void Initialize()
         {
+            CurrentDirection = 1f;
+            CurrentState = new ActorState(this);
+            OnGround = true;
 
+            // よくアクセスするコンポーネントは、プロパティに持っておく。
+            Animator = gameObject.GetComponent<Animator>();
+            Rigitbody2D = gameObject.GetComponent<Rigidbody2D>();
+        }
+
+        /// <summary>
+        /// スプライトを反転させる。
+        /// </summary>
+        /// <param name="sign">そのままにしたい場合は0以上。反転させたい場合は負数。</param>
+        public void FlipSprite(float sign)
+        {
+            if (sign == 0.0f)
+            {
+                return;
+            }
+
+            Vector2 v = gameObject.transform.localScale;
+            v.x = (sign >= 0f) ? 1f : -1f;
+            gameObject.transform.localScale = v;
+        }
+
+        /// <summary>
+        /// このオブジェクトが現在停止しているかどうかを判定する。
+        /// </summary>
+        public bool IsStopped()
+        {
+            // TODO Stop判定処理は決め打ちなので、後で検討すること。
+            float x = Rigitbody2D.velocity.x;
+            return (x > -5f && x < 5f);
         }
 
         /// <summary>
@@ -33,7 +117,12 @@
         /// </summary>
         public virtual void HandleInput(InputObject input)
         {
-
+            ActorState state = CurrentState.HandleInput(input);
+            if (state != null)
+            {
+                CurrentState = state;
+                CurrentState.Enter();
+            }
         }
     }
 }
