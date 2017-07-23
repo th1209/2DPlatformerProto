@@ -1,24 +1,16 @@
 ﻿namespace PfProto.State
 {
-    using System;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.Assertions;
 
-    using Actor;
     using Input;
+    using Actor;
 
-    /// <summary>
-    /// Playerクラス固有の状態を表すクラス。
-    /// </summary>
-    /// <remarks>
-    /// Playerクラスの状態に関する処理のうち、
-    /// 全ての状態に共通する操作は、このクラスにまとめること。
-    /// </remarks>
-    public class PlayerState : ActorState
+    public class EnemyState : ActorState
     {
-        public PlayerState(Actor actor)
+        public EnemyState(Actor actor)
             : base(actor)
         {
 
@@ -26,20 +18,11 @@
 
         public override void Enter()
         {
-
+            Assert.IsTrue(false, "You must call derivative method.");
         }
 
         public override ActorState HandleInput(InputObject input)
         {
-            if (input is JumpInputObject)
-            {
-                Actor.Rigitbody2D.AddForce(
-                    Vector2.up * Actor.VerticalForce, ForceMode2D.Impulse);
-                Actor.OnGround = false;
-
-                return new PlayerJumpingState(Actor);
-            }
-
             if (input is HorizontalInputObject)
             {
                 Vector2 v = Vector2.zero;
@@ -65,15 +48,15 @@
                 }
 
                 Actor.Rigitbody2D.AddForce(
-                    v * Actor.HorizontalForce, ForceMode2D.Impulse);
+                    v* Actor.HorizontalForce, ForceMode2D.Impulse);
                 Actor.FlipSprite(v.x);
 
-                return new PlayerWalkingState(Actor);
+                return new EnemyWalkingState(Actor);
             }
 
             if (Actor.IsStopped())
             {
-                return new PlayerWaitingState(Actor);
+                return new EnemyWaitingState(Actor);
             }
 
             return null;

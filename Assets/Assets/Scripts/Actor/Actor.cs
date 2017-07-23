@@ -15,7 +15,7 @@
         /// <summary>
         /// 横方向移動時にかかる力。
         /// </summary>
-        public float VerticalForce
+        public virtual float VerticalForce
         {
             get { return 500f; }
         }
@@ -23,9 +23,31 @@
         /// <summary>
         /// 縦方向移動時にかかる力
         /// </summary>
-        public float HorizontalForce
+        public virtual float HorizontalForce
         {
             get { return 50f; }
+        }
+
+        public virtual float MaxVelocityX
+        {
+            get { return 100f; }
+        }
+
+        public virtual float MaxVelocityY
+        {
+            get { return 100f; }
+        }
+
+        public bool ExceedVelocityX()
+        {
+            float current = Mathf.Abs(Rigitbody2D.velocity.x);
+            return (current > MaxVelocityX);
+        }
+
+        public bool ExceedVelocityY()
+        {
+            float current = Mathf.Abs(Rigitbody2D.velocity.y);
+            return (current > MaxVelocityY);
         }
 
         /// <summary>
@@ -35,6 +57,16 @@
         {
             get;
             set;
+        }
+
+        public bool FaceRight()
+        {
+            return CurrentDirection >= 1f;
+        }
+
+        public bool FaceLeft()
+        {
+            return CurrentDirection <= -1f;
         }
 
         /// <summary>

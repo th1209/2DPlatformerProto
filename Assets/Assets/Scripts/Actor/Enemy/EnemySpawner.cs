@@ -34,35 +34,27 @@
 
         private void Update()
         {
-            Debug.Log(HasSpawned);
+
         }
 
-        //private void OnCollisionEnter2D(Collision2D other)
-        //{
-        //    Debug.Log("Enter");
-        //    if (other.gameObject.tag == "Player") {
-        //        Debug.Log("Player Enter");
-        //        Spawn();
-        //        HasSpawned = true;
-        //    }
-        //}
         private void OnTriggerEnter2D(Collider2D other)
         {
-            Debug.Log(other.gameObject.tag);
             if (other.gameObject.tag == "Player" && ! HasSpawned)
             {
-                Debug.Log("Player Enter");
                 Spawn();
                 HasSpawned = true;
             }
         }
 
+        /// <summary>
+        /// 新規にEnemyインスタンスを生成する。
+        /// </summary>
         private GameObject Spawn()
         {
             GameObject enemy = Instantiate(
                 EnemyPrefab, transform.position, transform.rotation);
-            //enemy.AddComponent<Rigidbody2D>();
-            //enemy.AddComponent<BoxCollider2D>();
+            // TODO インスペクタなどで、好きな型のEnemyをAddComponentできるようにしたい。
+            enemy.AddComponent<Enemy>();
             return enemy;
         }
     }
